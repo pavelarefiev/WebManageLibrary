@@ -46,8 +46,6 @@ namespace WebApplication2.Pages.Books
                 }
                 return Page();
             }
-
-
             if (UploadedFile != null && UploadedFile.Length > 0)
             {
                 try
@@ -75,6 +73,10 @@ namespace WebApplication2.Pages.Books
                     ModelState.AddModelError(string.Empty, "Error saving file.");
                     return Page();
                 }
+            }
+            else
+            {
+                FileRecord.FilePath = null;
             }
 
             _context.FileRecords.Add(FileRecord);

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Pages.Models; // Замените на ваш namespace
+using WebApplication2.Pages.Models;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Collections.Generic;
@@ -34,14 +34,17 @@ namespace WebApplication2.Pages
             if (!string.IsNullOrEmpty(SearchTitle))
             {
                 query = query.Where(b => b.Title.Contains(SearchTitle));
+                _logger.LogInformation($"SearchTitle is not empty {SearchTitle}");
             }
 
             if (!string.IsNullOrEmpty(SearchAuthor))
             {
                 query = query.Where(b => b.Author.Contains(SearchAuthor));
+                _logger.LogInformation($"SearchAuthor is not empty {SearchAuthor}");
             }
 
             FileRecords = await query.ToListAsync();
+            _logger.LogInformation($"Found {FileRecords.Count} FileRecords");
             _logger.LogInformation("OnGetAsync finished");
         }
     }

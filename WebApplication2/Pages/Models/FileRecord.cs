@@ -9,8 +9,7 @@ namespace WebApplication2.Pages.Models
         [Required(ErrorMessage = "Имя файла обязательно")]
         public string FileName { get; set; }
 
-        [Required(ErrorMessage = "Путь к файлу обязателен")]
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
 
         [Required(ErrorMessage = "Автор обязателен")]
         [StringLength(100, ErrorMessage = "Длина автора не должна превышать 100 символов.")]
