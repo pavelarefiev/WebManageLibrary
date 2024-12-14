@@ -32,7 +32,43 @@ else
 }
 
 app.UseStaticFiles();
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "text/plain";
+        await context.Response.WriteAsync($"Global Exception Handler - An error occurred: {ex.Message}\n{ex.StackTrace}");
+    }
+});
+
 app.UseRouting();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.HasFormContentType)
+    {
+        var form = await context.Request.ReadFormAsync();
+        if (form.Files.Count > 0)
+        {
+            foreach (var file in form.Files)
+            {
+                System.Diagnostics.Debug.WriteLine($"FileName = {file.FileName}, Length = {file.Length}, ContentType = {file.ContentType}");
+            }
+
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Form files is empty");
+        }
+    }
+    await next();
+});
+
 app.UseAuthorization();
 app.MapRazorPages();
 

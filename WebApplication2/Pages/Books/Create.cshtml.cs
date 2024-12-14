@@ -35,14 +35,16 @@ namespace WebApplication2.Pages.Books
         public async Task<IActionResult> OnPostAsync()
         {
             _logger.LogInformation("OnPostAsync method started");
+            _logger.LogInformation("ModelState valid: " + ModelState.IsValid.ToString());
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Model state is invalid");
+                return Page();
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogWarning("Model state is invalid");
-                    return Page();
-                }
-
                 if (UploadedFile != null && UploadedFile.Length > 0)
                 {
                     _logger.LogInformation("Starting file processing");
@@ -85,7 +87,6 @@ namespace WebApplication2.Pages.Books
                             _logger.LogError($"An error occurred during file copy: {copyEx.Message}\n{copyEx.StackTrace}");
                             throw;
                         }
-
                     }
                     Book.FilePath = "/uploads/" + fileName;
                 }
