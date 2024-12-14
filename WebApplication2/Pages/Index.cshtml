@@ -7,8 +7,20 @@
 <h2>Менеджер книг</h2>
 
 <a asp-page="/Books/Create" class="btn btn-primary mb-3">Добавить книгу</a>
-<a asp-page="/Test/Test" class="btn btn-primary mb-3">Тестовая страница</a>
+
 <h3>Список книг</h3>
+<form method="get">
+      <div class="form-group">
+        <label for="searchTitle">Поиск по названию:</label>
+        <input type="text" name="searchTitle" class="form-control" value="@Model.SearchTitle"/>
+    </div>
+    <div class="form-group">
+        <label for="searchAuthor">Поиск по автору:</label>
+         <input type="text" name="searchAuthor" class="form-control" value="@Model.SearchAuthor" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Поиск</button>
+</form>
 <table>
     <thead>
         <tr>
@@ -32,11 +44,11 @@
                         }
                         else if (book.FilePath.ToLower().EndsWith(".txt"))
                         {
-                                         <a href="@book.FilePath" target="_blank">Открыть TXT</a>
+                                          <a href="@book.FilePath" target="_blank">Открыть TXT</a>
                         }
                         else
                         {
-                                        <a href="@book.FilePath" target="_blank">Скачать</a>
+                                           <a href="@book.FilePath" target="_blank">Скачать</a>
                         }
                     }
                     </td>

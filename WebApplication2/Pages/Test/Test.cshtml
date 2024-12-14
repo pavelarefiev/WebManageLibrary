@@ -6,11 +6,22 @@
 
 <h1>Test Page</h1>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="UploadedFile">Upload file</label>
         <input asp-for="UploadedFile" type="file" class="form-control" />
         <span asp-validation-for="UploadedFile" class="text-danger"></span>
     </div>
-<button type="submit" class="btn btn-primary">Test</button>
+
+    <div class="form-group">
+        <label asp-for="SelectedFile">Select file</label>
+        <select asp-for="SelectedFile" class="form-control">
+             <option value="">-- Select Existing File --</option>
+            @foreach (var file in Model.ExistingFiles)
+            {
+                       <option value="@file">@file</option>
+            }
+           </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Test</button>
 </form>

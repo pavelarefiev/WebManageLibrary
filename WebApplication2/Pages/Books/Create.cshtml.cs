@@ -22,8 +22,8 @@ namespace WebApplication2.Pages.Books
             _logger.LogInformation("CreateModel constructor is called");
         }
 
-        //[BindProperty] // Закомментировано
-        //public Book Book { get; set; }
+        [BindProperty]
+        public Book Book { get; set; } = new Book();
 
         [BindProperty]
         public IFormFile? UploadedFile { get; set; }
@@ -36,6 +36,37 @@ namespace WebApplication2.Pages.Books
         public IActionResult OnPost()
         {
             _logger.LogInformation("OnPost method is called");
+
+            if (UploadedFile != null && UploadedFile.Length > 0)
+            {
+                try
+                {
+                    _logger.LogInformation($"File Name {UploadedFile.FileName},  File Size = {UploadedFile.Length} File Type = {UploadedFile.ContentType}");
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                        _logger.LogInformation($"Directory created at {uploadsFolder}");
+                    }
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + UploadedFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        UploadedFile.CopyTo(fileStream);
+                    }
+                    _logger.LogInformation($"File saved to {filePath}");
+                    Book.FilePath = "/uploads/" + uniqueFileName;
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error saving file: {ex.Message}, {ex.StackTrace}");
+                }
+            }
+            _context.Books.Add(Book);
+            _context.SaveChanges();
+
             return RedirectToPage("/Index");
         }
     }

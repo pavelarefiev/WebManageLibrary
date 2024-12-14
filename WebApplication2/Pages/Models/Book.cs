@@ -7,12 +7,9 @@ namespace WebApplication2.Pages.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
-
+        public string Title { get; set; } = string.Empty;
         [Required]
-        public string Author { get; set; }
-
-        // Убрали DataType.Upload
-        public string FilePath { get; set; }
+        public string Author { get; set; } = string.Empty;
+        public string? FilePath { get; set; }
     }
 }
