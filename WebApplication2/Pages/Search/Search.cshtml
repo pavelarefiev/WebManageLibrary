@@ -1,0 +1,37 @@
+﻿@page
+@model WebApplication2.Pages.SearchModel
+@{
+    ViewData["Title"] = "Search Files";
+}
+<h2>Поиск файлов</h2>
+<form method="post">
+    <div class="form-group">
+        <label for="searchTerm">Поиск по автору или названию:</label>
+        <input type="text" class="form-control" name="searchTerm">
+    </div>
+    <button type="submit" class="btn btn-primary">Найти</button>
+</form>
+
+@if (Model.SearchResults != null && Model.SearchResults.Any())
+{
+        <h3>Результаты поиска:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>FileName</th>
+                    <th>Author</th>
+                     <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.SearchResults)
+            {
+                        <tr>
+                            <td>@item.FileName</td>
+                            <td>@item.Author</td>
+                            <td>@item.Title</td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}

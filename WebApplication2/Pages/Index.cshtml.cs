@@ -1,24 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Pages.Models;
+using WebApplication2.Pages.Models; // Замените на ваш namespace
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApplication2.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly LibraryDbContext _context;
         private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(AppDbContext context, ILogger<IndexModel> logger)
+        public IndexModel(LibraryDbContext context, ILogger<IndexModel> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public List<Book> Books { get; set; } = new List<Book>();
+        public List<FileRecord> FileRecords { get; set; } = new List<FileRecord>();
         [BindProperty(SupportsGet = true)]
         public string? SearchTitle { get; set; }
         [BindProperty(SupportsGet = true)]
@@ -27,7 +29,7 @@ namespace WebApplication2.Pages
         public async Task OnGetAsync()
         {
             _logger.LogInformation("OnGetAsync started");
-            var query = _context.Books.AsQueryable();
+            var query = _context.FileRecords.AsQueryable();
 
             if (!string.IsNullOrEmpty(SearchTitle))
             {
@@ -39,7 +41,7 @@ namespace WebApplication2.Pages
                 query = query.Where(b => b.Author.Contains(SearchAuthor));
             }
 
-            Books = await query.ToListAsync();
+            FileRecords = await query.ToListAsync();
             _logger.LogInformation("OnGetAsync finished");
         }
     }

@@ -5,15 +5,16 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
 using Microsoft.Extensions.Logging;
+
 namespace WebApplication2.Pages.Books
 {
     public class CreateModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly LibraryDbContext _context;
         private readonly IWebHostEnvironment _environment;
         private readonly ILogger<CreateModel> _logger;
 
-        public CreateModel(AppDbContext context, IWebHostEnvironment environment, ILogger<CreateModel> logger)
+        public CreateModel(LibraryDbContext context, IWebHostEnvironment environment, ILogger<CreateModel> logger)
         {
             _context = context;
             _environment = environment;
@@ -22,7 +23,7 @@ namespace WebApplication2.Pages.Books
         }
 
         [BindProperty]
-        public Book Book { get; set; } = new Book();
+        public FileRecord FileRecord { get; set; } = new FileRecord();
 
         [BindProperty]
         public IFormFile? UploadedFile { get; set; }
@@ -39,6 +40,10 @@ namespace WebApplication2.Pages.Books
             if (!ModelState.IsValid)
             {
                 _logger.LogError("ModelState is not valid");
+                foreach (var modelError in ModelState.Values.SelectMany(e => e.Errors))
+                {
+                    _logger.LogError($"Error: {modelError.ErrorMessage}");
+                }
                 return Page();
             }
 
@@ -62,16 +67,17 @@ namespace WebApplication2.Pages.Books
                         UploadedFile.CopyTo(fileStream);
                     }
                     _logger.LogInformation($"File saved to {filePath}");
-                    Book.FilePath = "/uploads/" + uniqueFileName;
-
+                    FileRecord.FilePath = "/uploads/" + uniqueFileName;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"Error saving file: {ex.Message}, {ex.StackTrace}");
+                    ModelState.AddModelError(string.Empty, "Error saving file.");
+                    return Page();
                 }
             }
 
-            _context.Books.Add(Book);
+            _context.FileRecords.Add(FileRecord);
             _context.SaveChanges();
 
             return RedirectToPage("/Index");

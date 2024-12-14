@@ -1,7 +1,36 @@
 ﻿@page
 @model WebApplication2.Pages.Books.CreateModel
 @{
-	ViewData["Title"] = "Create Book";
+    ViewData["Title"] = "Create File Record";
 }
-<h2>Create Book</h2>
- <input type="file" class="form-control" />
+<h2>Create File Record</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="FileRecord.FileName">Имя файла:</label>
+        <input asp-for="FileRecord.FileName" class="form-control" />
+        <span asp-validation-for="FileRecord.FileName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FileRecord.Author">Автор:</label>
+        <input asp-for="FileRecord.Author" class="form-control" />
+        <span asp-validation-for="FileRecord.Author" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FileRecord.Title">Название:</label>
+        <input asp-for="FileRecord.Title" class="form-control" />
+        <span asp-validation-for="FileRecord.Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="UploadedFile">Загрузить файл:</label>
+        <input type="file" class="form-control" asp-for="UploadedFile"/>
+         <span asp-validation-for="UploadedFile" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
