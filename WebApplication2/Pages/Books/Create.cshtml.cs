@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
 using Microsoft.Extensions.Logging;
-
 namespace WebApplication2.Pages.Books
 {
     public class CreateModel : PageModel
@@ -37,6 +36,13 @@ namespace WebApplication2.Pages.Books
         {
             _logger.LogInformation("OnPost method is called");
 
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("ModelState is not valid");
+                return Page();
+            }
+
+
             if (UploadedFile != null && UploadedFile.Length > 0)
             {
                 try
@@ -64,6 +70,7 @@ namespace WebApplication2.Pages.Books
                     _logger.LogError($"Error saving file: {ex.Message}, {ex.StackTrace}");
                 }
             }
+
             _context.Books.Add(Book);
             _context.SaveChanges();
 
