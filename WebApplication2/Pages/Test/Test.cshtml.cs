@@ -26,6 +26,14 @@ namespace WebApplication2.Pages.Test
         public IActionResult OnPost()
         {
             _logger.LogInformation("Test OnPost called");
+            if (UploadedFile != null)
+            {
+                _logger.LogInformation($"File Name {UploadedFile.FileName},  File Size = {UploadedFile.Length} File Type = {UploadedFile.ContentType}");
+            }
+            else
+            {
+                _logger.LogInformation("UploadedFile is null");
+            }
             return RedirectToPage("/Index");
         }
     }
