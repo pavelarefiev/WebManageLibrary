@@ -23,7 +23,21 @@
                     <td>@book.Title</td>
                     <td>@book.Author</td>
                     <td>
-                        <a href="@book.FilePath" target="_blank">Скачать</a>
+                    @if (!string.IsNullOrEmpty(book.FilePath))
+                    {
+                        @if (book.FilePath.ToLower().EndsWith(".pdf"))
+                        {
+                                        <a href="@book.FilePath" target="_blank">Скачать PDF</a>
+                        }
+                        else if (book.FilePath.ToLower().EndsWith(".txt"))
+                        {
+                                         <a href="@book.FilePath" target="_blank">Открыть TXT</a>
+                        }
+                        else
+                        {
+                                        <a href="@book.FilePath" target="_blank">Скачать</a>
+                        }
+                    }
                     </td>
                 </tr>
         }
