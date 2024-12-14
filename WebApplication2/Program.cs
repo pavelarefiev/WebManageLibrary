@@ -1,42 +1,21 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Pages.Models;
-using Microsoft.AspNetCore.Diagnostics;
+using WebApplication2.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавление контекста базы данных
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=books.db"));
-
+// Add services to the container.
 builder.Services.AddRazorPages();
-
-// Добавляем логирование
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
-builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
-
-// Добавляем IWebHostEnvironment
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<Microsoft.AspNetCore.Hosting.IWebHostEnvironment>(builder.Environment);
-// builder.WebHost.UseUrls("http://localhost:5001"); // Закомментировано или удалено
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "text/plain";
-        await context.Response.WriteAsync($"Global Exception Handler - An error occurred: {ex.Message}\n{ex.StackTrace}");
-    }
-});
-
-
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -44,19 +23,17 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseRouting();
+
+app.UseAuthorization();
+
 app.MapRazorPages();
-
-
-// Создание базы данных
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
-}
 
 app.Run();

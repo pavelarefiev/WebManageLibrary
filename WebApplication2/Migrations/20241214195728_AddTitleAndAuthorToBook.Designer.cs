@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApplication2.Pages.Models;
+using WebApplication2.Pages;
 
 #nullable disable
 
 namespace WebApplication2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241214142146_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241214195728_AddTitleAndAuthorToBook")]
+    partial class AddTitleAndAuthorToBook
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,7 +30,6 @@ namespace WebApplication2.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

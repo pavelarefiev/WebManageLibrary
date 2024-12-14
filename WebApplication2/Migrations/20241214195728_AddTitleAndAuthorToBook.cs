@@ -5,7 +5,7 @@
 namespace WebApplication2.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddTitleAndAuthorToBook : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace WebApplication2.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Author = table.Column<string>(type: "TEXT", nullable: false),
-                    FilePath = table.Column<string>(type: "TEXT", nullable: false)
+                    FilePath = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
