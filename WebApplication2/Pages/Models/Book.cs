@@ -12,7 +12,7 @@ namespace WebApplication2.Pages.Models
         [Required]
         public string Author { get; set; }
 
-        [DataType(DataType.Upload)]
+        // Убрали DataType.Upload
         public string FilePath { get; set; }
     }
 }

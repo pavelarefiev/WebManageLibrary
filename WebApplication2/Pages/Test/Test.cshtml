@@ -1,0 +1,16 @@
+﻿@page
+@model WebApplication2.Pages.Test.TestModel
+@{
+    ViewData["Title"] = "Test Page";
+}
+
+<h1>Test Page</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="UploadedFile">Upload file</label>
+        <input asp-for="UploadedFile" type="file" class="form-control" />
+        <span asp-validation-for="UploadedFile" class="text-danger"></span>
+    </div>
+<button type="submit" class="btn btn-primary">Test</button>
+</form>
