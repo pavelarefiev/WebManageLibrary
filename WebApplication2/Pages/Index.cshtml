@@ -6,22 +6,7 @@
 
 <h2>Менеджер книг</h2>
 
-<form method="post" enctype="multipart/form-data">
-    <div>
-        <label>Название книги:</label>
-        <input type="text" asp-for="Book.Title" required />
-    </div>
-    <div>
-        <label>Автор книги:</label>
-        <input type="text" asp-for="Book.Author" required />
-    </div>
-    <div>
-        <label>Файл PDF:</label>
-        <input type="file" asp-for="File" />
-    </div>
-    <button type="submit">Добавить книгу</button>
-</form>
-
+<a asp-page="/Books/Create" class="btn btn-primary mb-3">Добавить книгу</a>
 <h3>Список книг</h3>
 <table>
     <thead>

@@ -5,64 +5,110 @@ using WebApplication2.Pages.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting; // Добавляем IWebHostEnvironment
+using System;
+using Microsoft.Extensions.Logging;
 
 namespace WebApplication2.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(AppDbContext context)
+        public IndexModel(AppDbContext context, IWebHostEnvironment environment, ILogger<IndexModel> logger)
         {
             _context = context;
+            _environment = environment;
+            _logger = logger;
         }
 
         [BindProperty]
         public Book Book { get; set; }
+
         [BindProperty]
         public IFormFile File { get; set; }
+
         public IList<Book> Books { get; set; }
 
         public async Task OnGetAsync()
         {
+            _logger.LogInformation("OnGetAsync started");
             Books = await _context.Books.ToListAsync();
+            _logger.LogInformation("OnGetAsync finished");
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            try
+            _logger.LogInformation("OnPostAsync started");
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
+                _logger.LogWarning("Model state is invalid.");
+                return Page();
+            }
+            _logger.LogInformation("Model state is valid.");
+
+            if (File != null && File.Length > 0)
+            {
+                // Проверка типа файла
+                if (!File.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
                 {
+                    ModelState.AddModelError("File", "Файл должен быть PDF.");
+                    _logger.LogWarning("File is not pdf.");
+                    return Page();
+                }
+                // Проверка размера файла (не более 5Мб)
+                if (File.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("File", "Файл не должен превышать 5 Мб.");
+                    _logger.LogWarning("File is too large.");
                     return Page();
                 }
 
-                if (File != null)
+                string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+
+                if (!Directory.Exists(uploadsFolder))
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                    Directory.CreateDirectory(uploadsFolder); // Создаем папку, если она не существует
-                    var filePath = Path.Combine(uploadsFolder, File.FileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await File.CopyToAsync(stream);
-                    }
-
-                    Book.FilePath = "/uploads/" + File.FileName; // Сохраните путь к файлу
+                    _logger.LogInformation($"Created directory {uploadsFolder}");
+                    Directory.CreateDirectory(uploadsFolder);
                 }
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(File.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
 
-                _context.Books.Add(Book);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    _logger.LogInformation($"Start copy file to {filePath}");
+                    await File.CopyToAsync(stream);
+                    _logger.LogInformation($"Copy file to {filePath} successfull");
+                }
+                Book.FilePath = "/uploads/" + fileName;
+                _logger.LogInformation($"File path is {Book.FilePath}");
+            }
+            else
+            {
+                ModelState.AddModelError("File", "Файл не выбран");
+                _logger.LogWarning("File is not selected.");
+                return Page();
+            }
+
+
+            _context.Books.Add(Book);
+            try
+            {
+                _logger.LogInformation("Start saving changes");
                 await _context.SaveChangesAsync();
-
-                return RedirectToPage(); // Перенаправление на текущую страницу
+                _logger.LogInformation("Saving changes successfull");
             }
             catch (Exception ex)
             {
-                // Логирование ошибок
-                Console.WriteLine($"Error: {ex.Message}");
-                ModelState.AddModelError(string.Empty, "Произошла ошибка при добавлении книги. Пожалуйста, попробуйте еще раз.");
+                ModelState.AddModelError(string.Empty, $"Ошибка при сохранении данных: {ex.Message}");
+                _logger.LogError($"Error during save changes: {ex.Message}");
                 return Page();
             }
+
+            _logger.LogInformation("OnPostAsync finished");
+            return RedirectToPage();
         }
     }
 }
