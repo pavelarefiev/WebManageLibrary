@@ -1,0 +1,46 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Менеджер книг";
+}
+
+<h2>Менеджер книг</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div>
+        <label>Название книги:</label>
+        <input type="text" asp-for="Book.Title" required />
+    </div>
+    <div>
+        <label>Автор книги:</label>
+        <input type="text" asp-for="Book.Author" required />
+    </div>
+    <div>
+        <label>Файл PDF:</label>
+        <input type="file" asp-for="File" />
+    </div>
+    <button type="submit">Добавить книгу</button>
+</form>
+
+<h3>Список книг</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Файл</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model.Books)
+        {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>
+                        <a href="@book.FilePath" target="_blank">Скачать</a>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
